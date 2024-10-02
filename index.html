@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #2a9d8f;
+        }
+        table {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            background-color: #264653;
+            color: white;
+        }
+        td {
+            text-align: center;
+            padding: 12px;
+        }
+        .input-wrapper {
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #6fb98f; /* Cadre léger autour des champs remplissables */
+            border-radius: 8px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #264653;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .delta {
+            font-size: 1.2rem;
+            color: #e76f51;
+            font-weight: 600;
+        }
+        .visible {
+            opacity: 1;
+        }
+        .centered-columns {
+            display: flex;
+            justify-content: space-around;
+        }
+        .column {
+            width: 45%;
+        }
+    </style>
+    <title>Comparatif de Réseaux de Mandataires</title>
+</head>
+<body>
+
+    <h2>Comparatif de Réseaux de Mandataires</h2>
+
+    <div class="centered-columns">
+        <div class="column">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Votre situation actuelle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="input-wrapper">
+                            <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
+                            <input type="number" id="honoraires-actuels" placeholder="28 000" value="28000" oninput="calculateHonoraires()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="input-wrapper">
+                            <label for="pack-mensuel">Forfait mensuel d'adhésion HT (€) :</label>
+                            <input type="number" id="pack-mensuel" placeholder="Prix du pack" value="0" oninput="calculateHonoraires()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="input-wrapper">
+                            <label for="commission">Commissions perçues sur les ventes (%) :</label>
+                            <input type="number" id="commission" placeholder="Commission en %" value="0" oninput="calculateHonoraires()">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Résultat pour la situation actuelle -->
+            <div id="result-actuel" class="result">28 000 € /an<br>Avec votre affiliation actuelle</div>
+        </div>
+
+        <div class="column">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Avec Meilleur Conseil Immo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div>Honoraires annuels HT (€) :</div>
+                            <div id="honoraires-mci">Calcul en cours...</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>Forfait mensuel d'adhésion HT :</div>
+                            <div>Gratuit à vie</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>Paliers évolutifs</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Résultat pour Meilleur Conseil Immo -->
+            <div id="result-mci" class="result">36 500 € /an (+8 500 €)<br>Avec Meilleur Conseil Immo</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateHonoraires() {
+            const honorairesActuels = parseFloat(document.getElementById("honoraires-actuels").value) || 0;
+            const packMensuel = parseFloat(document.getElementById("pack-mensuel").value) || 0;
+            const commissionActuelle = parseFloat(document.getElementById("commission").value) / 100 || 0;
+
+            // Calcul pour Meilleur Conseil Immo
+            let honorairesMCI = 0;
+            if (honorairesActuels <= 35000) {
+                honorairesMCI = honorairesActuels * 0.75;
+            } else if (honorairesActuels <= 75000) {
+                honorairesMCI = 35000 * 0.75 + (honorairesActuels - 35000) * 0.85;
+            } else {
+                honorairesMCI = 35000 * 0.75 + 40000 * 0.85 + (honorairesActuels - 75000) * 1.00;
+            }
+
+            // Calcul des honoraires actuels avec les commissions et le pack
+            const honorairesRestants = honorairesActuels * commissionActuelle - packMensuel * 12;
+
+            // Calcul du delta
+            const delta = honorairesMCI - honorairesRestants;
+
+            // Mise à jour des résultats
+            document.getElementById("honoraires-mci").textContent = honorairesMCI.toFixed(2) + " €";
+            document.getElementById("result-actuel").innerHTML = honorairesRestants.toFixed(2) + " € /an<br>Avec votre affiliation actuelle";
+            document.getElementById("result-mci").innerHTML = `${honorairesMCI.toFixed(2)} € /an <span class="delta">(+${delta.toFixed(2)} €)</span><br>Avec Meilleur Conseil Immo`;
+
+            // Apparition des résultats en fondu
+            if (honorairesActuels && packMensuel && commissionActuelle) {
+                document.getElementById("result-actuel").classList.add("visible");
+                document.getElementById("result-mci").classList.add("visible");
+            } else {
+                document.getElementById("result-actuel").classList.remove("visible");
+                document.getElementById("result-mci").classList.remove("visible");
+            }
+        }
+
+        // Initialiser le calcul au chargement de la page
+        calculateHonoraires();
+    </script>
+
+</body>
+</html>
