@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur d'Offres</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .delta {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #result-mci .pack-gratuit {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+        #result-mci img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        .result-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .result-box {
+            width: 48%;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .result-box h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .visible {
+            display: block;
+        }
+        #result-actuel, #result-mci {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comparateur d'Offres</h1>
+
+    <div>
+        <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
+        <input type="number" id="honoraires-actuels" value="39000">
+    </div>
+    <div>
+        <label for="pack-mensuel">Forfait diffusion mensuel :</label>
+        <input type="number" id="pack-mensuel" value="300">
+    </div>
+    <div>
+        <label for="forfait-pubs">Forfait pubs annuel :</label>
+        <input type="number" id="forfait-pubs" value="200">
+    </div>
+    <div>
+        <label for="commission">Commission (%) :</label>
+        <input type="number" id="commission" value="5">
+    </div>
+
+    <button onclick="calculateHonoraires()">Calculer</button>
+
+    <div class="result-wrapper">
+        <div id="result-actuel" class="result-box">
+            <h2>Votre offre actuelle</h2>
+            <div id="result-actuel-text"></div>
+        </div>
+
+        <div id="result-mci" class="result-box">
+            <h2>Notre offre - Meilleur Conseil Immo</h2>
+            <div id="honoraires-mci"></div>
+            <div class="pack-gratuit">
+                PACK GRATUIT
+                <img src="https://cdn-icons-png.flaticon.com/512/3214/3214425.png" alt="Fusée">
+            </div>
+            <div class="delta"></div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
+        }
+
+        function calculateHonoraires() {
+            const honorairesActuels = parseFloat(document.getElementById("honoraires-actuels").value) || 0;
+            const packMensuel = parseFloat(document.getElementById("pack-mensuel").value) || 0;
+            const forfaitPubs = parseFloat(document.getElementById("forfait-pubs").value) || 0;
+            const commissionActuelle = parseFloat(document.getElementById("commission").value) / 100 || 0;
+
+            // Calcul pour Meilleur Conseil Immo
+            let honorairesMCI = 0;
+            if (honorairesActuels <= 35000) {
+                honorairesMCI = honorairesActuels * 0.75;
+            } else if (honorairesActuels <= 75000) {
+                honorairesMCI = 35000 * 0.75 + (honorairesActuels - 35000) * 0.85;
+            } else {
+                honorairesMCI = 35000 * 0.75 + 40000 * 0.85 + (honorairesActuels - 75000) * 1.00;
+            }
+
+            // Calcul des honoraires actuels avec les commissions, le pack et le forfait pubs
+            const honorairesRestants = honorairesActuels * commissionActuelle - packMensuel * 12 - forfaitPubs;
+
+            // Calcul du delta
+            const delta = honorairesMCI - honorairesRestants;
+
+            // Mise à jour des résultats pour Meilleur Conseil Immo
+            document.getElementById("honoraires-mci").textContent = formatNumber(honorairesMCI.toFixed(2)) + " /an";
+
+            document.getElementById("result-actuel-text").innerHTML = formatNumber(honorairesRestants.toFixed(2)) + " /an<br>Avec votre affiliation actuelle";
+
+            // Affiche le delta avec le signe "-" pour les valeurs négatives
+            const deltaText = delta < 0 ? `-${Math.abs(delta).toFixed(2)} €` : `+${delta.toFixed(2)} €`;
+
+            // Mise à jour du delta avec la couleur rouge ou verte
+            const deltaSpan = document.querySelector("#result-mci .delta");
+            deltaSpan.textContent = deltaText;
+            deltaSpan.style.color = delta < 0 ? "red" : "green";
+
+            // Apparition des résultats
+            document.getElementById("result-actuel").classList.add("visible");
+            document.getElementById("result-mci").classList.add("visible");
+        }
+    </script>
+</body>
+</html>
