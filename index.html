@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur d'Offres</title>
+    <style>
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .delta {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #result-mci .pack-gratuit {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+        #result-mci img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comparateur d'Offres</h1>
+
+    <div>
+        <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
+        <input type="number" id="honoraires-actuels" value="39000">
+    </div>
+    <div>
+        <label for="pack-mensuel">Forfait diffusion mensuel :</label>
+        <input type="number" id="pack-mensuel" value="300">
+    </div>
+    <div>
+        <label for="forfait-pubs">Forfait pubs annuel :</label>
+        <input type="number" id="forfait-pubs" value="200">
+    </div>
+    <div>
+        <label for="commission">Commission (%) :</label>
+        <input type="number" id="commission" value="5">
+    </div>
+
+    <button onclick="calculateHonoraires()">Calculer</button>
+
+    <div id="result-actuel" class="result"></div>
+    <div id="result-mci" class="result">
+        <span id="honoraires-mci"></span>
+        <div class="pack-gratuit">
+            PACK GRATUIT
+            <img src="https://cdn-icons-png.flaticon.com/512/3214/3214425.png" alt="Fusée">
+        </div>
+        <span class="delta"></span>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
+        }
+
+        function calculateHonoraires() {
+            const honorairesActuels = parseFloat(document.getElementById("honoraires-actuels").value) || 0;
+            const packMensuel = parseFloat(document.getElementById("pack-mensuel").value) || 0;
+            const forfaitPubs = parseFloat(document.getElementById("forfait-pubs").value) || 0;
+            const commissionActuelle = parseFloat(document.getElementById("commission").value) / 100 || 0;
+
+            // Calcul pour Meilleur Conseil Immo
+            let honorairesMCI = 0;
+            if (honorairesActuels <= 35000) {
+                honorairesMCI = honorairesActuels * 0.75;
+            } else if (honorairesActuels <= 75000) {
+                honorairesMCI = 35000 * 0.75 + (honorairesActuels - 35000) * 0.85;
+            } else {
+                honorairesMCI = 35000 * 0.75 + 40000 * 0.85 + (honorairesActuels - 75000) * 1.00;
+            }
+
+            // Calcul des honoraires actuels avec les commissions, le pack et le forfait pubs
+            const honorairesRestants = honorairesActuels * commissionActuelle - packMensuel * 12 - forfaitPubs;
+
+            // Calcul du delta
+            const delta = honorairesMCI - honorairesRestants;
+
+            // Mise à jour des résultats et des honoraires pour Meilleur Conseil Immo
+            document.getElementById("honoraires-mci").textContent = formatNumber(honorairesMCI.toFixed(2)) + " € /an";
+
+            document.getElementById("result-actuel").innerHTML = formatNumber(honorairesRestants.toFixed(2)) + " € /an<br>Avec votre affiliation actuelle";
+
+            // Affiche le delta avec le signe "-" pour les valeurs négatives
+            const deltaText = delta < 0 ? `-${Math.abs(delta).toFixed(2)} €` : `+${delta.toFixed(2)} €`;
+
+            // Mise à jour du delta avec la classe correspondant à la couleur
+            const deltaSpan = document.querySelector("#result-mci .delta");
+            deltaSpan.textContent = deltaText;
+            deltaSpan.style.color = delta < 0 ? "red" : "green"; // Rouge si négatif, vert si positif
+
+            // Apparition des résultats en fondu
+            if (honorairesActuels || packMensuel || forfaitPubs || commissionActuelle) {
+                document.getElementById("result-actuel").classList.add("visible");
+                document.getElementById("result-mci").classList.add("visible");
+            } else {
+                document.getElementById("result-actuel").classList.remove("visible");
+                document.getElementById("result-mci").classList.remove("visible");
+            }
+        }
+    </script>
+</body>
+</html>
