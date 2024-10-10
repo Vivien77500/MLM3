@@ -3,198 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Comparateur d'Offres</title>
     <style>
-        body {
-            font-family: 'Assistant', sans-serif;
-            background-color: rgba(255, 255, 255, 0.6);
-            color: #333;
-            padding: 20px;
-            position: relative;
-            font-weight: bold;
-        }
-
-        h2 {
-            font-size: 45px;
-            text-align: center;
-            color: #2a9d8f;
-        }
-
-        table th {
-            font-size: 30px;
-            color: #2a9d8f;
-        }
-
-        table {
-            width: 100%;
-            max-width: 900px;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: rgba(255, 255, 255, 0.4);
-            position: relative;
-        }
-
-        th, td {
-            text-align: center;
-            padding: 12px;
-            border: 1px solid #ddd;
-            font-size: 18px;
-        }
-
         .result {
-            font-size: 30px;
-            font-weight: bold;
-            text-align: center;
+            font-size: 24px;
             margin-top: 20px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
         }
-
-        .result-actuel {
-            color: red;
-        }
-
         .delta {
-            font-size: 40px;
+            font-size: 24px;
             font-weight: bold;
         }
-
-        .visible {
-            opacity: 1;
-        }
-
-        .centered-columns {
+        #result-mci .pack-gratuit {
+            font-size: 24px;
             display: flex;
-            justify-content: space-around;
+            align-items: center;
         }
-
-        .column {
-            width: 45%;
-            border: 2px solid #6fb98f;
-            border-radius: 8px;
-            padding: 10px;
-            position: relative;
-            overflow: visible;
-        }
-
-        .logo-background {
-            background-image: url('https://raw.githubusercontent.com/Vivien77500/MLM3/main/logomci.png');
-            background-size: 80%;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.2;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            border-radius: 8px;
-        }
-
-        input[type="number"] {
-            -moz-appearance: textfield;
-            -webkit-appearance: none;
-            appearance: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 8px;
-            width: calc(90% - 20px);
-            margin: 5px auto;
-            box-sizing: border-box;
-        }
-        
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .pack-gratuit {
-            font-size: 40px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .rocket-icon {
-            vertical-align: middle;
+        #result-mci img {
+            width: 24px;
+            height: 24px;
             margin-left: 10px;
         }
     </style>
-    <title>Comparatif de Réseaux de Mandataires</title>
 </head>
 <body>
+    <h1>Comparateur d'Offres</h1>
 
-    <h2>Comparatif de Réseaux de Mandataires</h2>
+    <div>
+        <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
+        <input type="number" id="honoraires-actuels" value="39000">
+    </div>
+    <div>
+        <label for="pack-mensuel">Forfait diffusion mensuel :</label>
+        <input type="number" id="pack-mensuel" value="300">
+    </div>
+    <div>
+        <label for="forfait-pubs">Forfait pubs annuel :</label>
+        <input type="number" id="forfait-pubs" value="200">
+    </div>
+    <div>
+        <label for="commission">Commission (%) :</label>
+        <input type="number" id="commission" value="5">
+    </div>
 
-    <div class="table-container">
-        <div class="centered-columns">
-            <div class="column">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Votre situation actuelle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="data-row">
-                                <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
-                                <input type="number" id="honoraires-actuels" placeholder="Ex : 28 000" value="28000" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="pack-mensuel">Forfait mensuel d'adhésion HT :</label>
-                                <input type="number" id="pack-mensuel" placeholder="Prix du pack" value="0" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="forfait-pubs">Forfait diffusion mensuel :</label>
-                                <input type="number" id="forfait-pubs" placeholder="Forfait pubs" value="0" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="commission">Votre pourcentage actuel :</label>
-                                <input type="number" id="commission" placeholder="Commission en %" value="0" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="result-actuel" class="result result-actuel">0,00 € /an<br>Avec votre affiliation actuelle</div>
-            </div>
+    <button onclick="calculateHonoraires()">Calculer</button>
 
-            <div class="column">
-                <div class="logo-background"></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Avec Meilleur Conseil Immo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="data-row">
-                                <strong id="honoraires-mci">0,00 €</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row pack-gratuit">PACK GRATUIT <img src="fusée.jpg" alt="Fusée" class="rocket-icon" width="30"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="result-mci" class="result">0,00 € /an <span class="delta">(+0,00 €)</span><br>Avec Meilleur Conseil Immo</div>
-            </div>
+    <div id="result-actuel" class="result"></div>
+    <div id="result-mci" class="result">
+        <span id="honoraires-mci"></span>
+        <div class="pack-gratuit">
+            PACK GRATUIT
+            <img src="https://cdn-icons-png.flaticon.com/512/3214/3214425.png" alt="Fusée">
         </div>
+        <span class="delta"></span>
     </div>
 
     <script>
         function formatNumber(num) {
-            return num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
         }
 
         function calculateHonoraires() {
@@ -220,31 +85,27 @@
             const delta = honorairesMCI - honorairesRestants;
 
             // Mise à jour des résultats et des honoraires pour Meilleur Conseil Immo
-            document.getElementById("honoraires-mci").textContent = formatNumber(honorairesMCI) + " €";
-            document.getElementById("result-actuel").innerHTML = formatNumber(honorairesRestants) + " € /an<br>Avec votre affiliation actuelle";
-            
+            document.getElementById("honoraires-mci").textContent = formatNumber(honorairesMCI.toFixed(2)) + " € /an";
+
+            document.getElementById("result-actuel").innerHTML = formatNumber(honorairesRestants.toFixed(2)) + " € /an<br>Avec votre affiliation actuelle";
+
             // Affiche le delta avec le signe "-" pour les valeurs négatives
             const deltaText = delta < 0 ? `-${Math.abs(delta).toFixed(2)} €` : `+${delta.toFixed(2)} €`;
-            
+
             // Mise à jour du delta avec la classe correspondant à la couleur
             const deltaSpan = document.querySelector("#result-mci .delta");
             deltaSpan.textContent = deltaText;
-            if (delta < 0) {
-                deltaSpan.style.color = "red"; // En rouge si négatif
-            } else {
-                deltaSpan.style.color = "green"; // En vert si positif
-            }
+            deltaSpan.style.color = delta < 0 ? "red" : "green"; // Rouge si négatif, vert si positif
 
             // Apparition des résultats en fondu
             if (honorairesActuels || packMensuel || forfaitPubs || commissionActuelle) {
                 document.getElementById("result-actuel").classList.add("visible");
                 document.getElementById("result-mci").classList.add("visible");
+            } else {
+                document.getElementById("result-actuel").classList.remove("visible");
+                document.getElementById("result-mci").classList.remove("visible");
             }
         }
-
-        window.onload = function() {
-            calculateHonoraires();
-        };
     </script>
 </body>
 </html>
