@@ -2,165 +2,173 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Comparatif de Réseaux de Mandataires</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Inclusion de la police Assistant -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Comparateur d'Offres</title>
     <style>
         body {
-            font-family: 'Assistant', sans-serif;
-            background-color: rgba(255, 255, 255, 0.6);
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
             color: #333;
+            margin: 0;
             padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+
+        label {
             font-weight: bold;
-        }
-        h2 {
-            font-size: 45px;
-            text-align: center;
-            color: #2a9d8f;
-        }
-        .centered-columns {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .column {
-            width: 45%;
-            min-width: 300px;
-            border: 2px solid #6fb98f;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px;
-            position: relative;
-            overflow: visible;
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-        table {
-            width: 100%;
-            margin: 0 auto;
-            border-collapse: collapse;
-            position: relative;
-        }
-        th, td {
-            text-align: center;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            font-size: 18px;
-        }
-        th {
-            font-size: 24px;
-            color: #2a9d8f;
-        }
-        .data-row {
-            text-align: left;
-        }
-        .data-row label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: normal;
+            margin: 15px 0 5px;
+            font-size: 1.1em;
+            color: #555;
         }
-        .data-row input[type="number"] {
-            width: calc(100% - 16px);
-            padding: 8px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            font-size: 1.1em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: border 0.3s ease;
         }
+
+        input[type="number"]:focus {
+            border: 2px solid #007BFF;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5em;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .result-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .result-box {
+            width: 48%;
+            padding: 25px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            text-align: center;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .result-box:hover {
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-box h2 {
+            font-size: 1.8em;
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+
         .result {
-            font-size: 24px;
-            margin-top: 20px;
-            text-align: center;
+            font-size: 2em;
+            color: #333;
         }
-        .result-actuel {
-            color: red;
-        }
+
         .delta {
-            font-size: 24px;
+            font-size: 2.5em;
             font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            transition: color 0.3s ease;
         }
-        .pack-gratuit {
-            font-size: 30px;
-            font-weight: bold;
-            margin-top: 20px;
-            text-align: center;
+
+        #result-mci .pack-gratuit {
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
         }
-        .rocket-icon {
-            vertical-align: middle;
+
+        #result-mci img {
+            width: 36px;
+            height: 36px;
             margin-left: 10px;
-            width: 30px;
-            height: auto;
         }
+
         .visible {
             opacity: 1;
+            transition: opacity 0.5s ease;
         }
-        /* Styles supplémentaires si nécessaire */
+
+        #result-actuel, #result-mci {
+            display: none;
+            opacity: 0;
+        }
+
     </style>
 </head>
 <body>
-    <h2>Comparatif de Réseaux de Mandataires</h2>
-    <div class="table-container">
-        <div class="centered-columns">
-            <!-- Colonne pour la situation actuelle -->
-            <div class="column">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Votre situation actuelle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="data-row">
-                                <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
-                                <input type="number" id="honoraires-actuels" placeholder="Ex : 28 000" value="28000" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="pack-mensuel">Forfait mensuel d'adhésion HT :</label>
-                                <input type="number" id="pack-mensuel" placeholder="Prix du pack" value="0" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="forfait-pubs">Forfait diffusion mensuel :</label>
-                                <input type="number" id="forfait-pubs" placeholder="Forfait diffusion" value="0" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="data-row">
-                                <label for="commission">Votre pourcentage actuel (%) :</label>
-                                <input type="number" id="commission" placeholder="Commission en %" value="70" oninput="calculateHonoraires()">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="result-actuel" class="result result-actuel">0,00 € /an<br>Avec votre affiliation actuelle</div>
+    <h1>Comparateur d'Offres Immobilier</h1>
+
+    <div>
+        <label for="honoraires-actuels">Honoraires annuels HT (€) :</label>
+        <input type="number" id="honoraires-actuels" value="39000">
+    </div>
+    <div>
+        <label for="pack-mensuel">Forfait diffusion mensuel :</label>
+        <input type="number" id="pack-mensuel" value="300">
+    </div>
+    <div>
+        <label for="forfait-pubs">Forfait pubs annuel :</label>
+        <input type="number" id="forfait-pubs" value="200">
+    </div>
+    <div>
+        <label for="commission">Commission (%) :</label>
+        <input type="number" id="commission" value="5">
+    </div>
+
+    <button onclick="calculateHonoraires()">Calculer</button>
+
+    <div class="result-wrapper">
+        <div id="result-actuel" class="result-box">
+            <h2>Votre offre actuelle</h2>
+            <div id="result-actuel-text" class="result"></div>
+        </div>
+
+        <div id="result-mci" class="result-box">
+            <h2>Notre offre - Meilleur Conseil Immo</h2>
+            <div id="honoraires-mci" class="result"></div>
+            <div class="pack-gratuit">
+                PACK GRATUIT
+                <img src="https://cdn-icons-png.flaticon.com/512/3214/3214425.png" alt="Fusée">
             </div>
-            <!-- Colonne pour Meilleur Conseil Immo -->
-            <div class="column">
-                <div class="logo-background"></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Avec Meilleur Conseil Immo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Suppression des lignes inutiles -->
-                        <tr>
-                            <td class="pack-gratuit">PACK GRATUIT <img src="https://cdn-icons-png.flaticon.com/512/3214/3214425.png" alt="Fusée" class="rocket-icon"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="result-mci" class="result">0,00 € /an <span class="delta">(+0,00 €)</span><br>Avec Meilleur Conseil Immo</div>
-            </div>
+            <span class="delta"></span>
         </div>
     </div>
+
     <script>
         function formatNumber(num) {
-            return num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(num);
         }
 
         function calculateHonoraires() {
@@ -179,34 +187,29 @@
                 honorairesMCI = 35000 * 0.75 + 40000 * 0.85 + (honorairesActuels - 75000) * 1.00;
             }
 
-            // Calcul des honoraires restants dans l'affiliation actuelle
-            const honorairesRestants = (honorairesActuels * commissionActuelle) - (packMensuel * 12) - (forfaitPubs * 12);
-
-            // Vérifiez que les honoraires restants ne soient pas négatifs
-            const finalHonorairesRestants = Math.max(honorairesRestants, 0);
+            // Calcul des honoraires actuels avec les commissions, le pack et le forfait pubs
+            const honorairesRestants = honorairesActuels * commissionActuelle - packMensuel * 12 - forfaitPubs;
 
             // Calcul du delta
-            const delta = honorairesMCI - finalHonorairesRestants;
+            const delta = honorairesMCI - honorairesRestants;
 
             // Mise à jour des résultats pour Meilleur Conseil Immo
-            document.getElementById("result-mci").innerHTML = formatNumber(honorairesMCI) + " € /an <span class='delta'>(" + (delta >= 0 ? "+" : "-") + formatNumber(Math.abs(delta)) + " €)</span><br>Avec Meilleur Conseil Immo";
+            document.getElementById("honoraires-mci").textContent = formatNumber(honorairesMCI.toFixed(2)) + " /an";
 
-            // Mise à jour des résultats pour l'affiliation actuelle
-            document.getElementById("result-actuel").innerHTML = formatNumber(finalHonorairesRestants) + " € /an<br>Avec votre affiliation actuelle";
+            document.getElementById("result-actuel-text").innerHTML = formatNumber(honorairesRestants.toFixed(2)) + " /an<br>Avec votre affiliation actuelle";
 
-            // Mise à jour du delta avec la couleur appropriée
+            // Affiche le delta avec le signe "-" pour les valeurs négatives
+            const deltaText = delta < 0 ? `-${Math.abs(delta).toFixed(2)} €` : `+${delta.toFixed(2)} €`;
+
+            // Mise à jour du delta avec la couleur rouge ou verte
             const deltaSpan = document.querySelector("#result-mci .delta");
+            deltaSpan.textContent = deltaText;
             deltaSpan.style.color = delta < 0 ? "red" : "green";
 
             // Apparition des résultats
             document.getElementById("result-actuel").classList.add("visible");
             document.getElementById("result-mci").classList.add("visible");
         }
-
-        // Calcul initial au chargement de la page
-        window.onload = function() {
-            calculateHonoraires();
-        };
     </script>
 </body>
 </html>
